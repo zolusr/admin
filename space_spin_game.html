@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Space Spin Game</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: black;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  #spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    width: 150px;
+    cursor: pointer;
+    transition: transform 0.6s ease-out;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="starCanvas"></canvas>
+
+<!-- Replace the src with your own PNG if you want -->
+<img id="spinner" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg" />
+
+<script>
+const canvas = document.getElementById("starCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+let agitation = 0;
+let rotation = 0;
+
+function createStars(count) {
+  stars = [];
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 1,
+      baseX: Math.random() * canvas.width,
+      baseY: Math.random() * canvas.height
+    });
+  }
+}
+
+createStars(150);
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+
+  stars.forEach(star => {
+    const offset = agitation * 2;
+    const jitterX = (Math.random() - 0.5) * offset;
+    const jitterY = (Math.random() - 0.5) * offset;
+
+    star.x = star.baseX + jitterX;
+    star.y = star.baseY + jitterY;
+
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(drawStars);
+}
+
+const spinner = document.getElementById("spinner");
+
+spinner.addEventListener("click", () => {
+  rotation += 360;
+  spinner.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+
+  agitation += 2;
+});
+
+drawStars();
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  createStars(150);
+});
+</script>
+
+</body>
+</html>
